@@ -7,7 +7,7 @@ import { Background } from "./components/fields/background";
 import { Evelyn } from "./components/characters/evelyn";
 import { Button } from "./components/fields/button";
 import { Aeris } from "./components/characters/aeris";
-import { Frame } from "./components/fields/frame";
+import { CoinFrame, Frame } from "./components/fields/frame";
 
 function App() {
   const [canvasCtx, setCanvasCtx] = useState();
@@ -30,11 +30,11 @@ function App() {
       ],
       button: {
         setting: new Button({ ctx: context, x: context.canvas.width / 1.23, y: context.canvas.height / 1.2, text: 'SETTING' }),
-        friend: new Button({ ctx: context, x: context.canvas.width / 1.58, y: context.canvas.height / 1.2, text: 'FRIEND' }),
-        hero: new Button({ ctx: context, x: context.canvas.width / 2.22, y: context.canvas.height / 1.2, text: 'HERO' }),
-        story: new Button({ ctx: context, x: context.canvas.width / 3.74, y: context.canvas.height / 1.2, text: 'STORY' }),
+        hero: new Button({ ctx: context, x: context.canvas.width / 1.58, y: context.canvas.height / 1.2, text: 'HERO' }),
+        story: new Button({ ctx: context, x: context.canvas.width / 2.21, y: context.canvas.height / 1.2, text: 'STORY' }),
       },
-      frame: new Frame({ ctx: context, x: 10, y: -10, hero: 'evelyn', playerName: 'Bryan'})
+      frame: new Frame({ ctx: context, x: 10, y: -10, hero: 'evelyn', playerName: 'Bryan'}),
+      coin: new CoinFrame({ ctx: context, x: context.canvas.width / 1.27, y: -10, coinAmount: 0 })
     })
 
     setCanvasCtx(context)
@@ -44,28 +44,38 @@ function App() {
     game.background.draw();
     game.button.story.draw();
     game.button.hero.draw();
-    game.button.friend.draw();
     game.button.setting.draw();
     game.frame.draw();
+    game.coin.draw();
     game.characters.forEach((character) => {
       character.walk()
     });
   }, [game, canvasCtx])
 
   useEffect(() => {
-    const handleButtonHover = (e) => {
+    const handleButtonHover = (e, type = null) => {
       if (game.button && canvasCtx) {
-        game.button.story.isHover(e)
-        game.button.hero.isHover(e)
-        game.button.friend.isHover(e)
-        game.button.setting.isHover(e)
+        const story = game.button.story.isOver(e)
+        const hero = game.button.hero.isOver(e)
+        const setting = game.button.setting.isOver(e)
+        if (type === 'click') {
+          if (story) {
+            console.log('story')
+          } else if (hero) {
+            console.log('hero')
+          } else if (setting) {
+            console.log('setting')
+          }
+        }
       }
     }
 
-    document.addEventListener('mousemove', handleButtonHover)
+    document.addEventListener('mousemove', (e) => handleButtonHover(e))
+    document.addEventListener('click', (e) => handleButtonHover(e, 'click'))
 
     return () => {
-      document.removeEventListener('mousemove', handleButtonHover)
+      document.removeEventListener('mousemove', (e) => handleButtonHover(e))
+      document.removeEventListener('click', (e) => handleButtonHover(e, 'click'))
     }
   }, [game, canvasCtx])
 

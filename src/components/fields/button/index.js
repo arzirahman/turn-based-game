@@ -52,19 +52,20 @@ export class Button {
             buttonHeight, 
             this.x + xOffset - (this.scale > 1 ? 4 : 0), 
             this.y + yOffset - (this.scale > 1 ? 4 : 0),
-            scaledWidth * this.scale, 
-            scaledHeight * this.scale
+            this.width, 
+            this.height
         );
     }
 
-    isHover(e) {
+    isOver(e) {
         if (e.clientX > this.xLowTh && e.clientX < this.xUpTh
             && e.clientY > this.yLowTh && e.clientY < this.yUpTh
         ) {
-            
             this.scale = 1.05
+            return true;
         } else {
             this.scale = 1;
+            return false
         }
     }
 }
