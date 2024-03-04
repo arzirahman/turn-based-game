@@ -2,7 +2,8 @@ import evelynImageSrc from '../../../assets/characters/evelyn.png'
 import { getScaledSize } from '../../../utils/general';
 
 export class Evelyn {
-    constructor({ x, y, ctx, speed = 0.5, movement = "right", spriteX = 1, spriteY = 11, body = 1, scale = 1 }) {
+    constructor({ id, x, y, ctx, speed = 0.5, movement = "right", spriteX = 1, spriteY = 11, body = 1, scale = 1 }) {
+        this.id = id;
         this.ctx = ctx;
         this.x = x;
         this.y = y;

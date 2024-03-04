@@ -8,11 +8,12 @@ import { Evelyn } from '../../characters/evelyn';
 import { Luna } from '../../characters/luna';
 
 export class Frame {
-    constructor({ ctx, x, y, hero, playerName }) {
+    constructor({ ctx, x, y, hero, playerName, level = 0 }) {
         this.ctx = ctx;
         this.playerName = playerName;
         this.x = x;
         this.y = y;
+        this.level = level
         this.img = new Image();
         this.img.src = frameImageSrc;
         this.img.onload = () => {
@@ -39,7 +40,7 @@ export class Frame {
     }
 
     setLevel(){
-        this.levelImg = new Level({ x: this.x + this.ctx.canvas.width / 20, y: this.y + this.ctx.canvas.height / 11, ctx: this.ctx })
+        this.levelImg = new Level({ x: this.x + this.ctx.canvas.width / 20, y: this.y + this.ctx.canvas.height / 11, ctx: this.ctx, level: this.level })
     }
 
     draw(){

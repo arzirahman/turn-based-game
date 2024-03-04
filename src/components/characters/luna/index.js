@@ -2,7 +2,8 @@ import lunaImageSrc from '../../../assets/characters/luna.png'
 import { getScaledSize } from '../../../utils/general';
 
 export class Luna {
-    constructor({ x, y, ctx, speed = 0.5, movement = "left", spriteX = 1, spriteY = 9, body = 1, scale = 1 }) {
+    constructor({ id, x, y, ctx, speed = 0.5, movement = "left", spriteX = 1, spriteY = 9, body = 1, scale = 1 }) {
+        this.id = id;
         this.ctx = ctx;
         this.x = x;
         this.y = y;
