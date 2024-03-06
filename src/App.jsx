@@ -60,7 +60,7 @@ function App() {
     }
   }, [playerStatus, canvasCtx])
 
-  const drawCharacter = useCallback(() => {
+  const drawAssets = useCallback(() => {
     if (game) {
       game.background.draw();
       game.button.story.draw();
@@ -72,10 +72,17 @@ function App() {
         character.walk()
       });
       if (modalHero) {
+        game.button.story.disable = true;
+        game.button.hero.disable = true;
+        game.button.setting.disable = true;
         if (selectedHeroModal) {
           game.modalHero.selectedHero = selectedHeroModal;
         }
         game.modalHero.draw();
+      } else {
+        game.button.story.disable = false;
+        game.button.hero.disable = false;
+        game.button.setting.disable = false;
       }
     }
   }, [game, modalHero, selectedHeroModal])
@@ -114,12 +121,12 @@ function App() {
       document.removeEventListener('mousemove', (e) => handleButtonHover(e))
       document.removeEventListener('click', (e) => handleButtonHover(e, 'click'))
     }
-  }, [game])
+  }, [game, modalHero])
 
   useEffect(() => {
     if (game) {
       const updateGame = () => {
-        drawCharacter();
+        drawAssets();
         animationRef.current = requestAnimationFrame(updateGame);
       };
 

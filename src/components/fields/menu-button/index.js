@@ -5,8 +5,8 @@ import settingImageSrc from '../../../assets/fields/button/setting.png'
 import { Button, getScaledSize } from '../../../utils/general';
 
 export class MenuButton extends Button {
-    constructor({ ctx, x, y, text }) {
-        super({ ctx, x, y });
+    constructor({ ctx, x, y, text, disable }) {
+        super({ ctx, x, y, disable });
         this.scale = 1/6;
         this.scaleOffsetX = 8;
         this.scaleHoverValue = 1.07

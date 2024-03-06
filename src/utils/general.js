@@ -57,9 +57,10 @@ export class Assets {
 }
 
 export class Button {
-    constructor({ ctx, x, y, width, height, scale, scaleOffsetX = 4, scaleOffsetY = 4, src, scaleHoverValue = 1.05 }) {
+    constructor({ ctx, x, y, width, height, scale, scaleOffsetX = 4, scaleOffsetY = 4, src, scaleHoverValue = 1.05, disable = false }) {
         this.ctx = ctx;
         this.x = x;
+        this.disable = disable
         this.scale = scale;
         this.scaleHover = 1;
         this.scaleOffsetX = scaleOffsetX;
@@ -104,7 +105,7 @@ export class Button {
 
     isOver(e) {
         if (e.clientX > this.xLowTh && e.clientX < this.xUpTh
-            && e.clientY > this.yLowTh && e.clientY < this.yUpTh
+            && e.clientY > this.yLowTh && e.clientY < this.yUpTh && !this.disable
         ) {
             this.scaleHover = this.scaleHoverValue
             return true;
