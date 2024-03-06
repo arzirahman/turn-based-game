@@ -3,14 +3,18 @@ import { useEffect } from "react";
 import { useRef } from "react"
 
 import { Background } from "./components/fields/background";
-import { Button } from "./components/fields/button";
+import { MenuButton } from "./components/fields/menu-button";
 import { CoinFrame, Frame } from "./components/fields/frame";
 import { getHeroes } from "./utils/hero";
+import { ModalHero } from "./components/fields/modal";
 
 function App() {
   const [playerStatus, setPlayerStatus] = useState();
   const [canvasCtx, setCanvasCtx] = useState();
-  const [game, setGame] = useState(null)
+  const [game, setGame] = useState(null);
+  const [modalHero, setModalHero] = useState(false);
+  const [selectedHeroModal, setSelectedHeroModal] = useState();
+
   const canvasRef = useRef();
   const animationRef = useRef(null);
 
@@ -27,13 +31,13 @@ function App() {
     if (canvasCtx) {
       setPlayerStatus({
         hero: [
-          { id: 1234, name: 'luna' },
-          { id: 2134, name: 'evelyn' },
-          { id: 4321, name: 'aeris' }
+          { id: 1234, name: 'Luna', status: { level: 10, health: 1200, attack: 300, armor: 30, speed: 45 } },
+          { id: 2134, name: 'Evelyn', status: { level: 5, health: 5323, attack: 67, armor: 100, speed: 20 } },
+          { id: 4321, name: 'Aeris', status: { level: 1, health: 234, attack: 34, armor: 45, speed: 60 } },
         ],
         coin: 1000,
         username: 'Bryan',
-        profileHero: 'luna',
+        profileHero: 'Luna',
         level: 5
       })
     }
@@ -45,12 +49,13 @@ function App() {
         background: new Background({ ctx: canvasCtx }),
         hero: getHeroes(canvasCtx, playerStatus.hero),
         button: {
-          setting: new Button({ ctx: canvasCtx, x: canvasCtx.canvas.width / 1.23, y: canvasCtx.canvas.height / 1.2, text: 'SETTING' }),
-          hero: new Button({ ctx: canvasCtx, x: canvasCtx.canvas.width / 1.58, y: canvasCtx.canvas.height / 1.2, text: 'HERO' }),
-          story: new Button({ ctx: canvasCtx, x: canvasCtx.canvas.width / 2.21, y: canvasCtx.canvas.height / 1.2, text: 'STORY' }),
+          setting: new MenuButton({ ctx: canvasCtx, x: canvasCtx.canvas.width / 1.23, y: canvasCtx.canvas.height / 1.2, text: 'SETTING' }),
+          hero: new MenuButton({ ctx: canvasCtx, x: canvasCtx.canvas.width / 1.58, y: canvasCtx.canvas.height / 1.2, text: 'HERO' }),
+          story: new MenuButton({ ctx: canvasCtx, x: canvasCtx.canvas.width / 2.21, y: canvasCtx.canvas.height / 1.2, text: 'STORY' }),
         },
         frame: new Frame({ ctx: canvasCtx, x: 10, y: -10, hero: playerStatus.profileHero, playerName: playerStatus.username, level: playerStatus.level }),
-        coin: new CoinFrame({ ctx: canvasCtx, x: canvasCtx.canvas.width / 1.27, y: -10, coinAmount: playerStatus.coin })
+        coin: new CoinFrame({ ctx: canvasCtx, x: canvasCtx.canvas.width / 1.27, y: -10, coinAmount: playerStatus.coin }),
+        modalHero: new ModalHero({ ctx: canvasCtx, heroes: getHeroes(canvasCtx, playerStatus.hero) })
       })
     }
   }, [playerStatus, canvasCtx])
@@ -66,8 +71,14 @@ function App() {
       game.hero.forEach((character) => {
         character.walk()
       });
+      if (modalHero) {
+        if (selectedHeroModal) {
+          game.modalHero.selectedHero = selectedHeroModal;
+        }
+        game.modalHero.draw();
+      }
     }
-  }, [game])
+  }, [game, modalHero, selectedHeroModal])
 
   useEffect(() => {
     const handleButtonHover = (e, type = null) => {
@@ -75,13 +86,22 @@ function App() {
         const story = game.button.story.isOver(e)
         const hero = game.button.hero.isOver(e)
         const setting = game.button.setting.isOver(e)
+
+        const modalHeroClose = game.modalHero.isCloseButtonOver(e);
+        const heroSelected = game.modalHero.getHeroListData(e);
+
         if (type === 'click') {
           if (story) {
             console.log('story')
           } else if (hero) {
-            console.log('hero')
+            setModalHero(true)
           } else if (setting) {
             console.log('setting')
+          } else if (modalHeroClose) {
+            setModalHero(false)
+          } else if (heroSelected) {
+            console.log(heroSelected)
+            setSelectedHeroModal(heroSelected)
           }
         }
       }
@@ -109,7 +129,7 @@ function App() {
         cancelAnimationFrame(animationRef.current);
       };
     }
-  }, [game]);
+  }, [game, modalHero, selectedHeroModal]);
 
   return <canvas ref={canvasRef} />
 }

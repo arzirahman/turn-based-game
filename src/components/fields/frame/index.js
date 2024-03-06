@@ -2,17 +2,18 @@ import frameImageSrc from '../../../assets/fields/frame/frame.png'
 import levelImgSrc from '../../../assets/fields/frame/level.png'
 import coinFrameImgSrc from '../../../assets/fields/frame/coin-frame.png'
 import coinImageSrc from '../../../assets/fields/frame/coin.png'
-import { getScaledSize } from '../../../utils/general';
+import { Assets, getScaledSize } from '../../../utils/general';
 import { Aeris } from '../../characters/aeris';
 import { Evelyn } from '../../characters/evelyn';
 import { Luna } from '../../characters/luna';
 
-export class Frame {
+export class Frame extends Assets {
     constructor({ ctx, x, y, hero, playerName, level = 0 }) {
-        this.ctx = ctx;
+        super({ ctx, x, y })
+        this.width = 367;
+        this.height = 149;
+        this.scale = 0.2;
         this.playerName = playerName;
-        this.x = x;
-        this.y = y;
         this.level = level
         this.img = new Image();
         this.img.src = frameImageSrc;
@@ -20,18 +21,18 @@ export class Frame {
             this.draw()
         }
         this.setPicture(hero);
-        this.setLevel();
+        this.levelImg = new Level({ x: x + ctx.canvas.width / 20, y: y + ctx.canvas.height / 11, ctx: ctx, level: level })
     }
 
     setPicture(hero){
         switch (hero) {
-            case 'luna':
+            case 'Luna':
                 this.picture = new Luna({ x: this.x - this.ctx.canvas.width / 25, y: this.y + this.ctx.canvas.height / 20, ctx: this.ctx, spriteY: 10, body: 0.6 }) 
                 break;
-            case 'evelyn':
+            case 'Evelyn':
                 this.picture = new Evelyn({ x: this.x - this.ctx.canvas.width / 25, y: this.y + this.ctx.canvas.height / 20, ctx: this.ctx, spriteY: 10, body: 0.6 }) 
                 break;
-            case 'aeris':
+            case 'Aeris':
                 this.picture = new Aeris({ x: this.x - this.ctx.canvas.width / 25, y: this.y + this.ctx.canvas.height / 20, ctx: this.ctx, spriteY: 10, body: 0.6 }) 
                 break;
             default:
@@ -39,130 +40,52 @@ export class Frame {
         }
     }
 
-    setLevel(){
-        this.levelImg = new Level({ x: this.x + this.ctx.canvas.width / 20, y: this.y + this.ctx.canvas.height / 11, ctx: this.ctx, level: this.level })
-    }
-
     draw(){
-        const frameWidth = 367;
-        const frameHeight = 149;
-
-        const { scaledHeight, scaledWidth, yOffset, xOffset, scaleFactor } = getScaledSize(this.ctx, frameWidth, frameHeight, 0.2);
-
-        this.ctx.drawImage(
-            this.img, 
-            0, 
-            0, 
-            frameWidth, 
-            frameHeight, 
-            this.x + xOffset, 
-            this.y + yOffset,
-            scaledWidth, 
-            scaledHeight
-        );
-
+        super.draw()
         if (this.picture) {
             this.picture.draw()
         }
-
         if (this.levelImg) {
             this.levelImg.draw()
         }
-
         if (this.playerName) {
             let displayedName = this.playerName;
             if (this.playerName.length > 10) {
                 displayedName = this.playerName.substring(0, 10) + '..';
             }
-            this.ctx.font = `bold ${scaleFactor * 30}px Comic Sans MS`;
+            this.ctx.font = `bold ${this.scaleFactor * 30}px Comic Sans MS`;
             this.ctx.fillStyle = 'white';
-    
             const textWidth = this.ctx.measureText(displayedName).width;
-    
-            const textX = this.x + 45 + xOffset + (scaledWidth - textWidth) / 2;
-    
-            const textY = this.y - 9 + yOffset + scaledHeight / 2 + 10;
-    
+            const textX = this.x + 45 + this.xOffset + (this.scaledWidth - textWidth) / 2;
+            const textY = this.y - 9 + this.yOffset + this.scaledHeight / 2 + 10;
             this.ctx.fillText(displayedName, textX, textY);
         }
     }
 }
 
-export class Coin {
-    constructor({ ctx, x, y }) {
-        this.ctx = ctx;
-        this.x = x;
-        this.y = y;
-        this.img = new Image();
-        this.img.src = coinImageSrc;
-        this.img.onload = () => {
-            this.draw()
-        }
-    }
-
-    draw(){
-        const frameWidth = 500;
-        const frameHeight = 500;
-
-        const { scaledHeight, scaledWidth, yOffset, xOffset } = getScaledSize(this.ctx, frameWidth, frameHeight, 0.07);
-
-        this.ctx.drawImage(
-            this.img, 
-            0, 
-            0, 
-            frameWidth, 
-            frameHeight, 
-            this.x + xOffset, 
-            this.y + yOffset,
-            scaledWidth, 
-            scaledHeight
-        );
-    }
-}
-
-export class CoinFrame {
+export class CoinFrame extends Assets {
     constructor({ ctx, x, y, coinAmount = 0 }) {
-        this.ctx = ctx;
+        super({ ctx, x, y })
+        this.width = 323;
+        this.height = 103;
+        this.scale = 0.2;
         this.coinAmount = coinAmount;
-        this.x = x;
-        this.y = y;
         this.img = new Image();
         this.img.src = coinFrameImgSrc;
         this.img.onload = () => {
             this.draw()
-            this.coin = new Coin({ ctx, x, y })
         }
+        this.coin = new Assets({ ctx, x, y, width: 500, height: 500, src: coinImageSrc, scale: 0.07 })
     }
 
     draw(){
-        const frameWidth = 323;
-        const frameHeight = 103;
-
-        const { scaledHeight, scaledWidth, yOffset, xOffset, scaleFactor } = getScaledSize(this.ctx, frameWidth, frameHeight, 0.2);
-
-        this.ctx.drawImage(
-            this.img, 
-            0, 
-            0, 
-            frameWidth, 
-            frameHeight, 
-            this.x + xOffset, 
-            this.y + yOffset,
-            scaledWidth, 
-            scaledHeight
-        );
-
-        this.ctx.font = `bold ${scaleFactor * 30}px Comic Sans MS`;
+        super.draw();
+        this.ctx.font = `bold ${this.scaleFactor * 30}px Comic Sans MS`;
         this.ctx.fillStyle = 'white';
-
         const textWidth = this.ctx.measureText(this.coinAmount).width;
-
-        const textX = this.x - 37 + xOffset + (scaledWidth - textWidth) / 2;
-
-        const textY = this.y - 1 + yOffset + scaledHeight / 2 + 10;
-
+        const textX = this.x - 37 + this.xOffset + (this.scaledWidth - textWidth) / 2;
+        const textY = this.y - 1 + this.yOffset + this.scaledHeight / 2 + 10;
         this.ctx.fillText(this.coinAmount, textX, textY);
-
         if (this.coin) {
             this.coin.x = this.x + this.ctx.canvas.width / 7.5;
             this.coin.y = this.y + this.ctx.canvas.height / 15.5;
@@ -171,12 +94,13 @@ export class CoinFrame {
     }
 }
 
-export class Level {
+export class Level extends Assets {
     constructor({ ctx, x, y, level = 0 }) {
-        this.ctx = ctx;
+        super({ ctx, x, y })
         this.level = level;
-        this.x = x;
-        this.y = y;
+        this.scale = 0.06;
+        this.width = 505;
+        this.height = 494;
         this.img = new Image();
         this.img.src = levelImgSrc;
         this.img.onload = () => {
@@ -185,32 +109,12 @@ export class Level {
     }
 
     draw(){
-        const frameWidth = 505;
-        const frameHeight = 494;
-
-        const { scaledHeight, scaledWidth, yOffset, xOffset, scaleFactor } = getScaledSize(this.ctx, frameWidth, frameHeight, 0.06);
-
-        this.ctx.drawImage(
-            this.img, 
-            0, 
-            0, 
-            frameWidth, 
-            frameHeight, 
-            this.x + xOffset, 
-            this.y + yOffset,
-            scaledWidth, 
-            scaledHeight
-        );
-
-        this.ctx.font = `bold ${scaleFactor * 200}px Times New Roman`;
+        super.draw();
+        this.ctx.font = `bold ${this.scaleFactor * 200}px Times New Roman`;
         this.ctx.fillStyle = 'black';
-
         const textWidth = this.ctx.measureText(this.level).width;
-
-        const textX = this.x + xOffset + (scaledWidth - textWidth) / 2;
-
-        const textY = this.y - 4 + yOffset + scaledHeight / 2 + 10;
-
+        const textX = this.x + this.xOffset + (this.scaledWidth - textWidth) / 2;
+        const textY = this.y - 4 + this.yOffset + this.scaledHeight / 2 + 10;
         this.ctx.fillText(this.level, textX, textY);
     }
 }
